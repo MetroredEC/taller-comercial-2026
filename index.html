@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taller Comercial Q3–Q4 · Metrored</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ── TOKENS ── */
+:root {
+  --black:   #1D1D1F;
+  --white:   #FFFFFF;
+  --lgray:   #F5F5F7;
+  --mgray:   #E8E8ED;
+  --sgray:   #6E6E73;
+  --teal:    #1DAFAE;
+  --dkteal:  #0D5756;
+  --orange:  #E8622A;
+  --border:  #D2D2D7;
+  --ink:     #1D1D1F;
+  --card-bg: #FFFFFF;
+  --input-bg:#F9F9FB;
+  --r:       12px;
+  --r-sm:    8px;
+  --shadow:  0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+  --shadow-l:0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--lgray);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--mgray);
+  padding: 0 28px;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-brand {
+  display: flex; align-items: center; gap: 12px;
+}
+.topbar-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--teal);
+}
+.topbar-title {
+  font-size: 14px; font-weight: 600; color: var(--black);
+  letter-spacing: -0.01em;
+}
+.topbar-sub {
+  font-size: 12px; color: var(--sgray); margin-left: 4px;
+}
+.topbar-nav {
+  display: flex; gap: 4px;
+}
+.nav-pill {
+  padding: 5px 14px; border-radius: 20px;
+  font-size: 12px; font-weight: 500; color: var(--sgray);
+  background: transparent; border: none; cursor: pointer;
+  transition: all .18s ease;
+  text-decoration: none; display: inline-block;
+}
+.nav-pill:hover { background: var(--lgray); color: var(--black); }
+.nav-pill.active { background: var(--black); color: var(--white); }
+.save-btn {
+  padding: 6px 16px; border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+  background: var(--teal); color: var(--white);
+  border: none; cursor: pointer;
+  transition: all .18s ease;
+  font-family: 'DM Sans', sans-serif;
+}
+.save-btn:hover { background: var(--dkteal); transform: translateY(-1px); }
+.save-btn:active { transform: translateY(0); }
+
+/* ── LAYOUT ── */
+.main { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+/* ── SECTION HEADER ── */
+.section-wrap { margin-bottom: 48px; }
+.section-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: .12em;
+  color: var(--teal); text-transform: uppercase;
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-eyebrow::after {
+  content: ''; flex: 1; height: 1px; background: var(--mgray);
+}
+.section-title {
+  font-size: 28px; font-weight: 700; color: var(--black);
+  letter-spacing: -.02em; line-height: 1.2;
+  margin-bottom: 6px;
+}
+.section-sub {
+  font-size: 14px; color: var(--sgray);
+  margin-bottom: 24px;
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.card-label {
+  font-size: 11px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--sgray);
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.label-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+}
+
+/* ── CITY TABS ── */
+.city-tabs {
+  display: flex; gap: 8px; margin-bottom: 20px;
+}
+.city-tab {
+  flex: 1; padding: 10px 0; border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 600;
+  border: 2px solid var(--mgray);
+  background: var(--white); color: var(--sgray);
+  cursor: pointer; transition: all .18s ease;
+  font-family: 'DM Sans', sans-serif;
+}
+.city-tab.active-quito {
+  border-color: var(--teal); color: var(--teal);
+  background: rgba(29,175,174,0.06);
+}
+.city-tab.active-gye {
+  border-color: var(--orange); color: var(--orange);
+  background: rgba(232,98,42,0.06);
+}
+
+/* ── CITY PANEL ── */
+.city-panel { display: none; }
+.city-panel.visible { display: block; }
+
+/* ── FORM ELEMENTS ── */
+.field-group { margin-bottom: 16px; }
+.field-label {
+  font-size: 12px; font-weight: 600; color: var(--sgray);
+  margin-bottom: 6px; display: block;
+  letter-spacing: .02em;
+}
+.field-input, .field-textarea, .field-select {
+  width: 100%; padding: 10px 14px;
+  border: 1.5px solid var(--mgray);
+  border-radius: var(--r-sm);
+  background: var(--input-bg);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px; color: var(--black);
+  transition: border-color .15s, box-shadow .15s;
+  outline: none;
+}
+.field-input:focus, .field-textarea:focus, .field-select:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(29,175,174,0.12);
+  background: var(--white);
+}
+.field-textarea { resize: vertical; min-height: 70px; line-height: 1.5; }
+.field-select { cursor: pointer; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.field-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+/* ── SEMÁFORO TABLE ── */
+.semaforo-table { width: 100%; border-collapse: collapse; }
+.semaforo-table thead th {
+  padding: 8px 12px;
+  font-size: 11px; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; text-align: left;
+}
+.semaforo-table thead th:first-child { color: var(--black); width: 36%; }
+.th-verde  { color: var(--dkteal); }
+.th-amarillo { color: #B87A00; }
+.th-rojo   { color: #C0392B; }
+.th-check  { width: 40px; text-align: center; }
+.semaforo-table tbody tr {
+  border-top: 1px solid var(--mgray);
+  transition: background .12s;
+}
+.semaforo-table tbody tr:hover { background: rgba(29,175,174,0.03); }
+.semaforo-table tbody td { padding: 10px 12px; vertical-align: middle; }
+.semaforo-table tbody td:first-child {
+  font-size: 13px; font-weight: 500; color: var(--black);
+}
+.semaforo-table tbody td:not(:first-child):not(:last-child) {
+  font-size: 12px; color: var(--sgray);
+}
+.semaforo-radio { display: none; }
+.semaforo-chip {
+  display: inline-block; padding: 4px 10px;
+  border-radius: 20px; font-size: 11px; font-weight: 500;
+  cursor: pointer; border: 1.5px solid var(--mgray);
+  background: transparent; color: var(--sgray);
+  transition: all .15s ease;
+  white-space: nowrap;
+}
+.semaforo-radio.v:checked ~ label.chip-v,
+label.chip-v.selected { background: rgba(13,87,86,0.1); border-color: var(--dkteal); color: var(--dkteal); }
+.semaforo-radio.a:checked ~ label.chip-a,
+label.chip-a.selected { background: rgba(184,122,0,0.1); border-color: #B87A00; color: #B87A00; }
+.semaforo-radio.r:checked ~ label.chip-r,
+label.chip-r.selected { background: rgba(192,57,43,0.1); border-color: #C0392B; color: #C0392B; }
+.check-cell { text-align: center; }
+.sem-checkbox {
+  width: 18px; height: 18px; accent-color: var(--teal); cursor: pointer;
+}
+
+/* ── MAPA TABLE ── */
+.mapa-table-wrap { overflow-x: auto; }
+.mapa-table {
+  width: 100%; border-collapse: collapse; min-width: 800px;
+}
+.mapa-table thead th {
+  padding: 9px 10px; text-align: left;
+  font-size: 11px; font-weight: 700; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--sgray);
+  border-bottom: 2px solid var(--black);
+  white-space: nowrap;
+}
+.mapa-table tbody tr { border-top: 1px solid var(--mgray); }
+.mapa-table tbody tr:hover { background: rgba(29,175,174,0.03); }
+.mapa-table tbody td { padding: 6px 8px; vertical-align: middle; }
+.mapa-table input, .mapa-table select {
+  width: 100%; padding: 6px 8px;
+  border: 1.5px solid transparent;
+  border-radius: 6px; background: var(--input-bg);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; color: var(--black);
+  transition: border-color .15s;
+  outline: none;
+}
+.mapa-table input:focus, .mapa-table select:focus {
+  border-color: var(--teal);
+  background: var(--white);
+}
+.mapa-table select { cursor: pointer; }
+.cuadrante-badge {
+  font-size: 10px; font-weight: 700; padding: 3px 7px;
+  border-radius: 4px; text-transform: uppercase; letter-spacing: .05em;
+  white-space: nowrap;
+}
+.badge-escalar    { background: rgba(13,87,86,0.12); color: var(--dkteal); }
+.badge-conquistar { background: rgba(232,98,42,0.12); color: var(--orange); }
+.badge-mantener   { background: rgba(29,175,174,0.12); color: var(--teal); }
+.badge-monitorear { background: rgba(110,110,115,0.12); color: var(--sgray); }
+
+/* ── PLAN TABLE ── */
+.plan-section { margin-bottom: 8px; }
+.plan-carril-header {
+  padding: 8px 14px;
+  font-size: 11px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase;
+  border-radius: var(--r-sm) var(--r-sm) 0 0;
+  display: flex; align-items: center; gap: 8px;
+}
+.plan-rows { border: 1.5px solid var(--mgray); border-top: none; border-radius: 0 0 var(--r-sm) var(--r-sm); overflow: hidden; }
+.plan-row {
+  display: grid;
+  grid-template-columns: 2.6fr .55fr 1fr .95fr 2fr;
+  gap: 0;
+  border-top: 1px solid var(--mgray);
+}
+.plan-row:first-child { border-top: none; }
+.plan-row:nth-child(even) { background: var(--lgray); }
+.plan-cell {
+  padding: 7px 10px; border-right: 1px solid var(--mgray);
+}
+.plan-cell:last-child { border-right: none; }
+.plan-cell input, .plan-cell select {
+  width: 100%; border: none; background: transparent;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--black);
+  outline: none; padding: 0;
+}
+.plan-col-header {
+  font-size: 10px; font-weight: 600; color: var(--sgray);
+  letter-spacing: .04em; text-transform: uppercase;
+}
+.plan-header-row {
+  display: grid;
+  grid-template-columns: 2.6fr .55fr 1fr .95fr 2fr;
+  border-top: 1px solid var(--mgray);
+  background: rgba(0,0,0,0.02);
+}
+
+/* ── COMPROMISOS ── */
+.compromisos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.compromiso-card {
+  background: var(--card-bg);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.compromiso-header {
+  padding: 10px 16px;
+  font-size: 11px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--white);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.compromiso-num {
+  font-size: 22px; font-weight: 700; opacity: .3; line-height: 1;
+}
+.compromiso-body { padding: 14px 16px; }
+.compromiso-body textarea {
+  width: 100%; border: none; background: transparent;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--black);
+  resize: none; outline: none; min-height: 64px; line-height: 1.5;
+}
+.compromiso-body textarea::placeholder { color: var(--border); }
+
+/* ── CHECKLIST ── */
+.checklist { display: flex; flex-direction: column; gap: 10px; }
+.check-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 16px;
+  background: var(--card-bg);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow);
+  cursor: pointer; transition: all .15s;
+}
+.check-item:hover { transform: translateX(2px); }
+.check-item input[type="checkbox"] { display: none; }
+.check-icon {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--border); flex-shrink: 0;
+  margin-top: 1px; transition: all .2s ease;
+  display: flex; align-items: center; justify-content: center;
+}
+.check-icon svg { opacity: 0; transition: opacity .15s; }
+.check-item input:checked ~ .check-icon {
+  background: var(--teal); border-color: var(--teal);
+}
+.check-item input:checked ~ .check-icon svg { opacity: 1; }
+.check-item input:checked ~ .check-text { color: var(--sgray); text-decoration: line-through; }
+.check-text { font-size: 14px; color: var(--black); line-height: 1.4; }
+
+/* ── PROGRESS BAR ── */
+.progress-wrap {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 32px;
+  background: var(--card-bg); border-radius: var(--r);
+  padding: 14px 20px; box-shadow: var(--shadow);
+}
+.progress-label { font-size: 12px; font-weight: 600; color: var(--sgray); white-space: nowrap; }
+.progress-bar-bg {
+  flex: 1; height: 6px; background: var(--mgray); border-radius: 3px; overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%; background: var(--teal); border-radius: 3px;
+  transition: width .4s cubic-bezier(.4,0,.2,1);
+  width: 0%;
+}
+.progress-pct { font-size: 12px; font-weight: 700; color: var(--teal); min-width: 32px; text-align: right; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 999;
+  background: var(--black); color: var(--white);
+  padding: 12px 20px; border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 500;
+  box-shadow: var(--shadow-l);
+  transform: translateY(100px); opacity: 0;
+  transition: all .28s cubic-bezier(.4,0,.2,1);
+  display: flex; align-items: center; gap: 8px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); }
+
+/* ── HERO HEADER ── */
+.hero {
+  background: var(--black); border-radius: var(--r);
+  padding: 36px 32px 32px;
+  margin-bottom: 32px;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(29,175,174,.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-tag {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--teal);
+  margin-bottom: 10px;
+}
+.hero-title {
+  font-size: 32px; font-weight: 700; color: var(--white);
+  letter-spacing: -.02em; line-height: 1.15; margin-bottom: 8px;
+}
+.hero-sub { font-size: 14px; color: #6E6E73; }
+.hero-meta {
+  display: flex; gap: 20px; margin-top: 20px;
+}
+.hero-pill {
+  font-size: 12px; font-weight: 500; color: rgba(255,255,255,.6);
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08);
+  padding: 5px 12px; border-radius: 20px;
+}
+
+/* ── INFO BOX ── */
+.infobox {
+  background: rgba(29,175,174,0.07);
+  border-left: 3px solid var(--teal);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  padding: 12px 16px; margin-bottom: 20px;
+  font-size: 13px; color: var(--sgray); line-height: 1.5;
+}
+.infobox strong { color: var(--black); }
+
+/* ── CUADRANT MINI LEGEND ── */
+.cuad-legend {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px; margin-bottom: 20px;
+}
+.cuad-item {
+  padding: 10px 14px; border-radius: var(--r-sm);
+  font-size: 12px;
+}
+.cuad-item strong { display: block; font-size: 13px; margin-bottom: 2px; }
+
+/* ── EXPORT AREA ── */
+.export-card {
+  background: var(--card-bg); border-radius: var(--r);
+  box-shadow: var(--shadow); padding: 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px;
+}
+.export-text { font-size: 14px; color: var(--black); font-weight: 500; }
+.export-sub { font-size: 12px; color: var(--sgray); margin-top: 2px; }
+.export-btns { display: flex; gap: 8px; flex-shrink: 0; }
+.btn-outline {
+  padding: 8px 18px; border-radius: 20px;
+  font-size: 13px; font-weight: 600;
+  border: 2px solid var(--mgray); background: transparent;
+  color: var(--sgray); cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .15s;
+}
+.btn-outline:hover { border-color: var(--teal); color: var(--teal); }
+.btn-solid {
+  padding: 8px 18px; border-radius: 20px;
+  font-size: 13px; font-weight: 600;
+  background: var(--black); color: var(--white);
+  border: none; cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .15s;
+}
+.btn-solid:hover { background: #333; transform: translateY(-1px); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .topbar-nav { display: none; }
+  .field-row, .field-row-3, .compromisos-grid { grid-template-columns: 1fr; }
+  .hero-title { font-size: 24px; }
+  .plan-row, .plan-header-row { grid-template-columns: 1fr; }
+  .plan-cell { border-right: none; border-bottom: 1px solid var(--mgray); }
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.section-wrap { animation: fadeUp .4s ease both; }
+.section-wrap:nth-child(2) { animation-delay: .06s; }
+.section-wrap:nth-child(3) { animation-delay: .12s; }
+.section-wrap:nth-child(4) { animation-delay: .18s; }
+.section-wrap:nth-child(5) { animation-delay: .24s; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-dot"></div>
+    <span class="topbar-title">Metrored</span>
+    <span class="topbar-sub">Taller Comercial Q3–Q4 2026</span>
+  </div>
+  <nav class="topbar-nav">
+    <a href="#diagnostico" class="nav-pill active" onclick="setActive(this)">Diagnóstico</a>
+    <a href="#cuentas" class="nav-pill" onclick="setActive(this)">Cuentas</a>
+    <a href="#plan" class="nav-pill" onclick="setActive(this)">Plan</a>
+    <a href="#compromisos" class="nav-pill" onclick="setActive(this)">Compromisos</a>
+    <a href="#cierre" class="nav-pill" onclick="setActive(this)">Cierre</a>
+  </nav>
+  <button class="save-btn" onclick="saveAll()">Guardar todo</button>
+</header>
+
+<main class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">Taller de planificación comercial</div>
+    <div class="hero-title">Q3 – Q4 · 2026</div>
+    <div class="hero-sub">Construye el mapa de cuentas y el plan de acción para Quito y Guayaquil</div>
+    <div class="hero-meta">
+      <span class="hero-pill">🏙 Quito + Guayaquil</span>
+      <span class="hero-pill">⏱ 4 horas</span>
+      <span class="hero-pill">📊 B2B Corporativo</span>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <span class="progress-label">Progreso del taller</span>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+    <span class="progress-pct" id="progressPct">0%</span>
+  </div>
+
+  <!-- ════ B2: DIAGNÓSTICO ════ -->
+  <section class="section-wrap" id="diagnostico">
+    <div class="section-eyebrow">Bloque 2 · 45 min</div>
+    <div class="section-title">Diagnóstico por ciudad</div>
+    <div class="section-sub">Semáforo de posición actual · Cada coordinador completa su ciudad</div>
+
+    <div class="city-tabs">
+      <button class="city-tab active-quito" onclick="showCity('q','diagnostico')">🏔 Quito</button>
+      <button class="city-tab" onclick="showCity('g','diagnostico')">🌊 Guayaquil</button>
+    </div>
+
+    <!-- QUITO -->
+    <div class="city-panel visible" id="diag-q">
+      <div class="card">
+        <div class="card-label"><span class="label-dot" style="background:var(--teal)"></span>Quito · Información general</div>
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label">Coordinador/a</label>
+            <input class="field-input" type="text" placeholder="Nombre completo" id="q-coord" oninput="updateProgress()">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Aseguradoras activas</label>
+            <input class="field-input" type="number" placeholder="N°" min="0" id="q-aseg" oninput="updateProgress()">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Brókers activos con derivación frecuente</label>
+            <input class="field-input" type="number" placeholder="N°" min="0" id="q-brok" oninput="updateProgress()">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label">Queja más frecuente de cuentas</label>
+            <input class="field-input" type="text" placeholder="Describe en una frase" id="q-queja" oninput="updateProgress()">
+          </div>
+          <div class="field-group">
+            <label class="field-label">¿Qué hace mejor tu competencia local?</label>
+            <input class="field-input" type="text" placeholder="Veris, SIME, MediLink..." id="q-comp" oninput="updateProgress()">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label"><span class="label-dot" style="background:var(--teal)"></span>Quito · Semáforo de posición</div>
+        <div class="infobox">Selecciona la opción que mejor describe la situación <strong>actual</strong> en tu ciudad.</div>
+        <div style="overflow-x:auto">
+          <table class="semaforo-table">
+            <thead>
+              <tr>
+                <th>Dimensión</th>
+                <th class="th-verde">Verde ✓</th>
+                <th class="th-amarillo">Amarillo</th>
+                <th class="th-rojo">Rojo ✗</th>
+                <th class="th-check">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="semaforo-q"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- GUAYAQUIL -->
+    <div class="city-panel" id="diag-g">
+      <div class="card">
+        <div class="card-label"><span class="label-dot" style="background:var(--orange)"></span>Guayaquil · Información general</div>
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label">Coordinador/a</label>
+            <input class="field-input" type="text" placeholder="Nombre completo" id="g-coord" oninput="updateProgress()">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Aseguradoras activas</label>
+            <input class="field-input" type="number" placeholder="N°" min="0" id="g-aseg" oninput="updateProgress()">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Brókers activos con derivación frecuente</label>
+            <input class="field-input" type="number" placeholder="N°" min="0" id="g-brok" oninput="updateProgress()">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label">Queja más frecuente de cuentas</label>
+            <input class="field-input" type="text" placeholder="Describe en una frase" id="g-queja" oninput="updateProgress()">
+          </div>
+          <div class="field-group">
+            <label class="field-label">¿Qué hace mejor tu competencia local?</label>
+            <input class="field-input" type="text" placeholder="Veris, MediLink..." id="g-comp" oninput="updateProgress()">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label"><span class="label-dot" style="background:var(--orange)"></span>Guayaquil · Semáforo de posición</div>
+        <div class="infobox">Selecciona la opción que mejor describe la situación <strong>actual</strong> en tu ciudad.</div>
+        <div style="overflow-x:auto">
+          <table class="semaforo-table">
+            <thead>
+              <tr>
+                <th>Dimensión</th>
+                <th class="th-verde">Verde ✓</th>
+                <th class="th-amarillo">Amarillo</th>
+                <th class="th-rojo">Rojo ✗</th>
+                <th class="th-check">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="semaforo-g"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ B3: MAPA DE CUENTAS ════ -->
+  <section class="section-wrap" id="cuentas">
+    <div class="section-eyebrow">Bloque 3 · 60 min · Output 1</div>
+    <div class="section-title">Mapa de cuentas prioritarias</div>
+    <div class="section-sub">Prioriza tus cuentas usando los 4 cuadrantes</div>
+
+    <div class="cuad-legend">
+      <div class="cuad-item" style="background:rgba(13,87,86,.08); border-left: 3px solid var(--dkteal)">
+        <strong style="color:var(--dkteal)">Escalar</strong>Alto potencial + relación sólida. Plan formal.
+      </div>
+      <div class="cuad-item" style="background:rgba(232,98,42,.08); border-left: 3px solid var(--orange)">
+        <strong style="color:var(--orange)">Conquistar</strong>Alto potencial + relación débil. Quick wins primero.
+      </div>
+      <div class="cuad-item" style="background:rgba(29,175,174,.08); border-left: 3px solid var(--teal)">
+        <strong style="color:var(--teal)">Mantener</strong>Bajo potencial + relación sólida. Comunicación regular.
+      </div>
+      <div class="cuad-item" style="background:rgba(110,110,115,.08); border-left: 3px solid var(--sgray)">
+        <strong style="color:var(--sgray)">Monitorear</strong>Bajo potencial + relación débil. Solo si hay riesgo.
+      </div>
+    </div>
+
+    <div class="city-tabs">
+      <button class="city-tab active-quito" onclick="showCity('q','cuentas')">🏔 Quito</button>
+      <button class="city-tab" onclick="showCity('g','cuentas')">🌊 Guayaquil</button>
+    </div>
+
+    <div class="city-panel visible" id="cuentas-q">
+      <div class="card">
+        <div class="card-label"><span class="label-dot" style="background:var(--teal)"></span>Quito · Cuentas prioritarias</div>
+        <div class="mapa-table-wrap"><table class="mapa-table" id="mapa-q"></table></div>
+        <button class="btn-outline" style="margin-top:12px; font-size:12px" onclick="addRow('q')">+ Agregar cuenta</button>
+      </div>
+    </div>
+
+    <div class="city-panel" id="cuentas-g">
+      <div class="card">
+        <div class="card-label"><span class="label-dot" style="background:var(--orange)"></span>Guayaquil · Cuentas prioritarias</div>
+        <div class="mapa-table-wrap"><table class="mapa-table" id="mapa-g"></table></div>
+        <button class="btn-outline" style="margin-top:12px; font-size:12px" onclick="addRow('g')">+ Agregar cuenta</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ B4: PLAN DE ACCIÓN ════ -->
+  <section class="section-wrap" id="plan">
+    <div class="section-eyebrow">Bloque 4 · 60 min · Output 2</div>
+    <div class="section-title">Plan de acción Q3–Q4</div>
+    <div class="section-sub">3 carriles · cada acción con responsable, trimestre y KPI</div>
+
+    <div class="city-tabs">
+      <button class="city-tab active-quito" onclick="showCity('q','plan')">🏔 Quito</button>
+      <button class="city-tab" onclick="showCity('g','plan')">🌊 Guayaquil</button>
+    </div>
+
+    <div class="city-panel visible" id="plan-q">
+      <div id="plan-q-content"></div>
+    </div>
+    <div class="city-panel" id="plan-g">
+      <div id="plan-g-content"></div>
+    </div>
+  </section>
+
+  <!-- ════ B5: COMPROMISOS ════ -->
+  <section class="section-wrap" id="compromisos">
+    <div class="section-eyebrow">Bloque 5 · 15 min</div>
+    <div class="section-title">Semáforo del plan</div>
+    <div class="section-sub">Cada coordinador responde las 3 preguntas de cierre</div>
+
+    <div class="compromisos-grid">
+      <div>
+        <div style="font-size:12px; font-weight:700; color:var(--teal); letter-spacing:.05em; text-transform:uppercase; margin-bottom:10px">Quito</div>
+        <div id="compromisos-q"></div>
+      </div>
+      <div>
+        <div style="font-size:12px; font-weight:700; color:var(--orange); letter-spacing:.05em; text-transform:uppercase; margin-bottom:10px">Guayaquil</div>
+        <div id="compromisos-g"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ CIERRE: CHECKLIST ════ -->
+  <section class="section-wrap" id="cierre">
+    <div class="section-eyebrow">Antes de irnos</div>
+    <div class="section-title">Checklist de cierre</div>
+    <div class="section-sub">Confirma que el taller está completo antes de cerrar</div>
+
+    <div class="checklist" id="checklist"></div>
+
+    <div style="margin-top:24px">
+      <div class="export-card">
+        <div>
+          <div class="export-text">Exportar resultados del taller</div>
+          <div class="export-sub">Guarda una copia en texto para compartir por WhatsApp o email</div>
+        </div>
+        <div class="export-btns">
+          <button class="btn-outline" onclick="copyText()">Copiar texto</button>
+          <button class="btn-solid" onclick="downloadTxt()">Descargar .txt</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-dot"></div>
+  <span id="toastMsg">Guardado</span>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA DEFINITIONS
+// ═══════════════════════════════════════════
+
+const SEMAFORO_ROWS = [
+  {
+    dim: "Cita — medicina general y especialidades",
+    v: "Mismo día – 24h", a: "24–72h", r: "Más de 72h / sin alternativa"
+  },
+  {
+    dim: "Cita — terapias e imágenes",
+    v: "24–48h con continuidad", a: "48–72h", r: "Irregular / redireccionamos"
+  },
+  {
+    dim: "Cobertura en caja",
+    v: "Sin quejas frecuentes", a: "Quejas ocasionales", r: "Quejas recurrentes"
+  },
+  {
+    dim: "Relación con aseguradoras",
+    v: "Reuniones de cuenta activas", a: "Contacto reactivo", r: "Sin contacto estructurado"
+  },
+  {
+    dim: "Relación con brókers",
+    v: "Planes activos por cuenta", a: "Contacto esporádico", r: "Solo cuando hay problema"
+  },
+  {
+    dim: "Herramientas digitales",
+    v: "App / portal fluido", a: "Parcialmente funcional", r: "Sin herramienta disponible"
+  }
+];
+
+const PLAN_CARRILES = [
+  { id: "op", label: "Operativo", desc: "Reducir fricciones visibles", color: "#0D5756", bg: "rgba(13,87,86,0.07)" },
+  { id: "rel", label: "Relacional", desc: "Profundizar con aseguradoras", color: "#1DAFAE", bg: "rgba(29,175,174,0.07)" },
+  { id: "com", label: "Comercial", desc: "Activar brókers", color: "#E8622A", bg: "rgba(232,98,42,0.07)" }
+];
+
+const COMPROMISOS_QS = [
+  { n: "1", q: "¿Cuál es la acción más importante que ejecutas en los próximos 30 días?", color: "#0D5756" },
+  { n: "2", q: "¿Qué necesitas de Diego o de otras áreas para ejecutar el plan?", color: "#1DAFAE" },
+  { n: "3", q: "¿Cuál es el riesgo más grande para ejecutar en tu ciudad?", color: "#E8622A" }
+];
+
+const CHECKLIST_ITEMS = [
+  "Semáforo de Quito completado",
+  "Semáforo de Guayaquil completado",
+  "Mapa de cuentas de Quito con mínimo 5 cuentas",
+  "Mapa de cuentas de Guayaquil con mínimo 5 cuentas",
+  "Plan de acción de Quito — al menos 6 acciones (2 por carril)",
+  "Plan de acción de Guayaquil — al menos 6 acciones (2 por carril)",
+  "Top 3 quick wins Q3 identificados por cada coordinador",
+  "Fechas de check-in quincenal agendadas en calendario",
+  "Acciones que necesitan soporte de Diego identificadas con fecha",
+  "Foto del rotafolio/pizarra compartida al grupo"
+];
+
+// ═══════════════════════════════════════════
+// RENDER: SEMÁFORO
+// ═══════════════════════════════════════════
+
+function buildSemaforo(cityId) {
+  const tbody = document.getElementById(`semaforo-${cityId}`);
+  tbody.innerHTML = SEMAFORO_ROWS.map((row, i) => `
+    <tr>
+      <td>${row.dim}</td>
+      <td>
+        <label class="semaforo-chip" style="cursor:pointer"
+          id="chip-${cityId}-${i}-v"
+          onclick="selectChip('${cityId}', ${i}, 'v')">
+          ${row.v}
+        </label>
+      </td>
+      <td>
+        <label class="semaforo-chip" style="cursor:pointer"
+          id="chip-${cityId}-${i}-a"
+          onclick="selectChip('${cityId}', ${i}, 'a')">
+          ${row.a}
+        </label>
+      </td>
+      <td>
+        <label class="semaforo-chip" style="cursor:pointer"
+          id="chip-${cityId}-${i}-r"
+          onclick="selectChip('${cityId}', ${i}, 'r')">
+          ${row.r}
+        </label>
+      </td>
+      <td class="check-cell">
+        <span id="sem-state-${cityId}-${i}" style="font-size:18px">—</span>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function selectChip(city, row, val) {
+  ['v','a','r'].forEach(v => {
+    const chip = document.getElementById(`chip-${city}-${row}-${v}`);
+    chip.classList.remove('chip-v','chip-a','chip-r','selected');
+  });
+  const chip = document.getElementById(`chip-${city}-${row}-${val}`);
+  chip.classList.add(`chip-${val}`, 'selected');
+  const icons = { v: '🟢', a: '🟡', r: '🔴' };
+  document.getElementById(`sem-state-${city}-${row}`).textContent = icons[val];
+  saveToStorage();
+  updateProgress();
+}
+
+// ═══════════════════════════════════════════
+// RENDER: MAPA DE CUENTAS
+// ═══════════════════════════════════════════
+
+function buildMapaTable(cityId) {
+  const tbl = document.getElementById(`mapa-${cityId}`);
+  tbl.innerHTML = `
+    <thead>
+      <tr>
+        <th style="min-width:160px">Cuenta</th>
+        <th style="min-width:80px">Tipo</th>
+        <th style="min-width:90px">Potencial</th>
+        <th style="min-width:90px">Relación</th>
+        <th style="min-width:115px">Cuadrante</th>
+        <th style="min-width:130px">KPI clave</th>
+        <th style="min-width:200px">Estrategia Q3–Q4</th>
+      </tr>
+    </thead>
+    <tbody id="mapa-tbody-${cityId}"></tbody>
+  `;
+  for (let i = 0; i < 8; i++) addRow(cityId, false);
+}
+
+function addRow(cityId, save = true) {
+  const tbody = document.getElementById(`mapa-tbody-${cityId}`);
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="text" placeholder="Nombre de la cuenta" oninput="updateProgress(); autoQuadrante(this.closest('tr'), '${cityId}')"></td>
+    <td>
+      <select onchange="saveToStorage(); autoQuadrante(this.closest('tr'), '${cityId}')">
+        <option value="">—</option>
+        <option>AS</option>
+        <option>BR</option>
+      </select>
+    </td>
+    <td>
+      <select onchange="saveToStorage(); autoQuadrante(this.closest('tr'), '${cityId}')">
+        <option value="">—</option>
+        <option>Alto</option>
+        <option>Medio</option>
+        <option>Bajo</option>
+      </select>
+    </td>
+    <td>
+      <select onchange="saveToStorage(); autoQuadrante(this.closest('tr'), '${cityId}')">
+        <option value="">—</option>
+        <option>Alto</option>
+        <option>Medio</option>
+        <option>Bajo</option>
+      </select>
+    </td>
+    <td id="badge-cell-${Date.now()}">
+      <select class="cuad-select" onchange="updateBadge(this); saveToStorage()">
+        <option value="">—</option>
+        <option>Escalar</option>
+        <option>Conquistar</option>
+        <option>Mantener</option>
+        <option>Monitorear</option>
+      </select>
+    </td>
+    <td><input type="text" placeholder="Métrica clave" oninput="saveToStorage()"></td>
+    <td><input type="text" placeholder="¿Qué vas a hacer con esta cuenta?" oninput="saveToStorage()"></td>
+  `;
+  tbody.appendChild(tr);
+  if (save) { saveToStorage(); updateProgress(); }
+}
+
+function autoQuadrante(tr, cityId) {
+  const selects = tr.querySelectorAll('select');
+  const pot = selects[1].value;
+  const rel = selects[2].value;
+  const cuadSel = selects[3];
+  if (!pot || !rel) return;
+  const alto = (v) => v === 'Alto' || v === 'Medio';
+  let cuad = '';
+  if (alto(pot) && alto(rel)) cuad = 'Escalar';
+  else if (alto(pot) && !alto(rel)) cuad = 'Conquistar';
+  else if (!alto(pot) && alto(rel)) cuad = 'Mantener';
+  else cuad = 'Monitorear';
+  cuadSel.value = cuad;
+  updateBadge(cuadSel);
+  saveToStorage();
+}
+
+function updateBadge(sel) {
+  const val = sel.value;
+  const classes = { Escalar:'badge-escalar', Conquistar:'badge-conquistar', Mantener:'badge-mantener', Monitorear:'badge-monitorear' };
+  sel.style.fontWeight = val ? '700' : '';
+  sel.style.color = val === 'Escalar' ? '#0D5756' : val === 'Conquistar' ? '#E8622A' : val === 'Mantener' ? '#1DAFAE' : '#6E6E73';
+}
+
+// ═══════════════════════════════════════════
+// RENDER: PLAN DE ACCIÓN
+// ═══════════════════════════════════════════
+
+function buildPlan(cityId) {
+  const container = document.getElementById(`plan-${cityId}-content`);
+  container.innerHTML = PLAN_CARRILES.map(carril => `
+    <div class="plan-section">
+      <div class="plan-carril-header" style="background:${carril.bg}; border-left: 4px solid ${carril.color}">
+        <span style="font-size:12px; font-weight:800; color:${carril.color}">${carril.label.toUpperCase()}</span>
+        <span style="font-size:11px; color:var(--sgray); font-weight:400">${carril.desc}</span>
+      </div>
+      <div class="plan-rows" id="plan-${cityId}-${carril.id}-rows">
+        <div class="plan-header-row" style="background:rgba(0,0,0,0.02)">
+          <div class="plan-cell"><span class="plan-col-header">Acción concreta</span></div>
+          <div class="plan-cell"><span class="plan-col-header">Q</span></div>
+          <div class="plan-cell"><span class="plan-col-header">Responsable</span></div>
+          <div class="plan-cell"><span class="plan-col-header">Fecha límite</span></div>
+          <div class="plan-cell"><span class="plan-col-header">¿Cómo sabremos que funcionó?</span></div>
+        </div>
+        ${[0,1,2].map(() => buildPlanRow(cityId, carril.id)).join('')}
+      </div>
+      <button class="btn-outline" style="font-size:11px; padding:5px 12px; margin-top:6px; margin-bottom:12px" onclick="addPlanRow('${cityId}','${carril.id}')">+ Acción</button>
+    </div>
+  `).join('');
+}
+
+function buildPlanRow(cityId, carrilId) {
+  return `<div class="plan-row">
+    <div class="plan-cell"><input type="text" placeholder="Describe la acción..." oninput="updateProgress(); saveToStorage()"></div>
+    <div class="plan-cell">
+      <select onchange="saveToStorage()" style="font-size:13px; color:var(--black); font-family:'DM Sans',sans-serif; border:none; background:transparent; width:100%; outline:none; cursor:pointer">
+        <option value="">—</option>
+        <option>Q3</option>
+        <option>Q4</option>
+      </select>
+    </div>
+    <div class="plan-cell"><input type="text" placeholder="Nombre" oninput="saveToStorage()"></div>
+    <div class="plan-cell"><input type="date" oninput="saveToStorage()"></div>
+    <div class="plan-cell"><input type="text" placeholder="Indicador de éxito" oninput="saveToStorage()"></div>
+  </div>`;
+}
+
+function addPlanRow(cityId, carrilId) {
+  const rows = document.getElementById(`plan-${cityId}-${carrilId}-rows`);
+  const div = document.createElement('div');
+  div.innerHTML = buildPlanRow(cityId, carrilId);
+  rows.appendChild(div.firstChild);
+  updateProgress();
+}
+
+// ═══════════════════════════════════════════
+// RENDER: COMPROMISOS
+// ═══════════════════════════════════════════
+
+function buildCompromisos(cityId) {
+  const container = document.getElementById(`compromisos-${cityId}`);
+  container.innerHTML = COMPROMISOS_QS.map(q => `
+    <div class="compromiso-card" style="margin-bottom:10px">
+      <div class="compromiso-header" style="background:${q.color}">
+        <span>${q.q}</span>
+        <span class="compromiso-num">${q.n}</span>
+      </div>
+      <div class="compromiso-body">
+        <textarea placeholder="Escribe aquí..." oninput="saveToStorage(); updateProgress()"
+          id="comp-${cityId}-${q.n}"></textarea>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════
+// RENDER: CHECKLIST
+// ═══════════════════════════════════════════
+
+function buildChecklist() {
+  const container = document.getElementById('checklist');
+  container.innerHTML = CHECKLIST_ITEMS.map((item, i) => `
+    <label class="check-item">
+      <input type="checkbox" id="chk-${i}" onchange="saveToStorage(); updateProgress()">
+      <div class="check-icon">
+        <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+          <path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="check-text">${item}</span>
+    </label>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════
+// CITY TABS
+// ═══════════════════════════════════════════
+
+function showCity(city, section) {
+  const sections = ['diagnostico','cuentas','plan'];
+  const prefixes = { diagnostico: 'diag', cuentas: 'cuentas', plan: 'plan' };
+
+  const prefix = prefixes[section] || section;
+  const panels = document.querySelectorAll(`[id^="${prefix}-"]`);
+  panels.forEach(p => p.classList.remove('visible'));
+  const target = document.getElementById(`${prefix}-${city}`);
+  if (target) target.classList.add('visible');
+
+  // Update tab states in this section
+  const sectionEl = document.getElementById(section);
+  if (!sectionEl) return;
+  const tabs = sectionEl.querySelectorAll('.city-tab');
+  tabs.forEach(tab => {
+    tab.className = 'city-tab';
+  });
+  const idx = city === 'q' ? 0 : 1;
+  if (tabs[idx]) {
+    tabs[idx].className = `city-tab ${city === 'q' ? 'active-quito' : 'active-gye'}`;
+  }
+}
+
+// ═══════════════════════════════════════════
+// NAV ACTIVE STATE
+// ═══════════════════════════════════════════
+
+function setActive(el) {
+  document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ═══════════════════════════════════════════
+// PROGRESS
+// ═══════════════════════════════════════════
+
+function updateProgress() {
+  let filled = 0, total = 0;
+
+  // Coords
+  ['q-coord','g-coord'].forEach(id => {
+    total++;
+    if (document.getElementById(id)?.value.trim()) filled++;
+  });
+
+  // Semaforos
+  ['q','g'].forEach(c => {
+    SEMAFORO_ROWS.forEach((_, i) => {
+      total++;
+      const hasSelection = ['v','a','r'].some(v => {
+        const chip = document.getElementById(`chip-${c}-${i}-${v}`);
+        return chip && chip.classList.contains('selected');
+      });
+      if (hasSelection) filled++;
+    });
+  });
+
+  // Mapa cuentas — count filled account names
+  ['q','g'].forEach(c => {
+    const tbody = document.getElementById(`mapa-tbody-${c}`);
+    if (!tbody) return;
+    tbody.querySelectorAll('tr').forEach(tr => {
+      total++;
+      const nameInput = tr.querySelector('input[type="text"]');
+      if (nameInput?.value.trim()) filled++;
+    });
+  });
+
+  // Plan actions
+  ['q','g'].forEach(c => {
+    PLAN_CARRILES.forEach(carril => {
+      const rows = document.getElementById(`plan-${c}-${carril.id}-rows`);
+      if (!rows) return;
+      rows.querySelectorAll('.plan-row').forEach(row => {
+        total++;
+        const inp = row.querySelector('input[type="text"]');
+        if (inp?.value.trim()) filled++;
+      });
+    });
+  });
+
+  // Compromisos
+  ['q','g'].forEach(c => {
+    COMPROMISOS_QS.forEach(q => {
+      total++;
+      const ta = document.getElementById(`comp-${c}-${q.n}`);
+      if (ta?.value.trim()) filled++;
+    });
+  });
+
+  // Checklist
+  CHECKLIST_ITEMS.forEach((_, i) => {
+    total++;
+    if (document.getElementById(`chk-${i}`)?.checked) filled++;
+  });
+
+  const pct = total ? Math.round((filled / total) * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+}
+
+// ═══════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════
+
+function saveToStorage() {
+  const data = {};
+
+  // Text inputs
+  document.querySelectorAll('input[type="text"], input[type="number"], input[type="date"], textarea, select').forEach(el => {
+    if (el.id) data[el.id] = el.value;
+  });
+
+  // Semaforo chips
+  ['q','g'].forEach(c => {
+    data[`sem-${c}`] = {};
+    SEMAFORO_ROWS.forEach((_, i) => {
+      ['v','a','r'].forEach(v => {
+        const chip = document.getElementById(`chip-${c}-${i}-${v}`);
+        if (chip?.classList.contains('selected')) data[`sem-${c}`][i] = v;
+      });
+    });
+  });
+
+  // Checkboxes
+  CHECKLIST_ITEMS.forEach((_, i) => {
+    const chk = document.getElementById(`chk-${i}`);
+    if (chk) data[`chk-${i}`] = chk.checked;
+  });
+
+  localStorage.setItem('metrored-taller-2026', JSON.stringify(data));
+}
+
+function loadFromStorage() {
+  const raw = localStorage.getItem('metrored-taller-2026');
+  if (!raw) return;
+  const data = JSON.parse(raw);
+
+  // Text inputs
+  Object.entries(data).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT')) {
+      el.value = val;
+    }
+  });
+
+  // Semaforo chips
+  ['q','g'].forEach(c => {
+    const sem = data[`sem-${c}`];
+    if (!sem) return;
+    Object.entries(sem).forEach(([i, v]) => selectChip(c, parseInt(i), v));
+  });
+
+  // Checkboxes
+  CHECKLIST_ITEMS.forEach((_, i) => {
+    const chk = document.getElementById(`chk-${i}`);
+    if (chk && data[`chk-${i}`] !== undefined) chk.checked = data[`chk-${i}`];
+  });
+}
+
+function saveAll() {
+  saveToStorage();
+  showToast('✓ Todo guardado en este dispositivo');
+}
+
+// ═══════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════
+
+function buildExportText() {
+  const lines = [
+    'TALLER COMERCIAL Q3–Q4 2026 · METRORED',
+    '=' .repeat(50),
+    '',
+    '── DIAGNÓSTICO ──',
+    '',
+    `Quito | Coordinador: ${document.getElementById('q-coord')?.value || '—'}`,
+    `  Aseguradoras activas: ${document.getElementById('q-aseg')?.value || '—'}`,
+    `  Brókers activos: ${document.getElementById('q-brok')?.value || '—'}`,
+    `  Queja frecuente: ${document.getElementById('q-queja')?.value || '—'}`,
+    `  Competencia: ${document.getElementById('q-comp')?.value || '—'}`,
+    '',
+    `Guayaquil | Coordinador: ${document.getElementById('g-coord')?.value || '—'}`,
+    `  Aseguradoras activas: ${document.getElementById('g-aseg')?.value || '—'}`,
+    `  Brókers activos: ${document.getElementById('g-brok')?.value || '—'}`,
+    `  Queja frecuente: ${document.getElementById('g-queja')?.value || '—'}`,
+    `  Competencia: ${document.getElementById('g-comp')?.value || '—'}`,
+    '',
+    '── MAPA DE CUENTAS ──',
+    ''
+  ];
+
+  ['q','g'].forEach(c => {
+    lines.push(`${c === 'q' ? 'QUITO' : 'GUAYAQUIL'}:`);
+    const tbody = document.getElementById(`mapa-tbody-${c}`);
+    if (tbody) {
+      tbody.querySelectorAll('tr').forEach((tr, i) => {
+        const inputs = tr.querySelectorAll('input, select');
+        const nombre = inputs[0]?.value;
+        if (!nombre) return;
+        const tipo = inputs[1]?.value || '—';
+        const pot = inputs[2]?.value || '—';
+        const rel = inputs[3]?.value || '—';
+        const cuad = inputs[4]?.value || '—';
+        const kpi = inputs[5]?.value || '—';
+        const est = inputs[6]?.value || '—';
+        lines.push(`  ${i+1}. [${tipo}] ${nombre} | ${cuad} | Pot: ${pot} Rel: ${rel}`);
+        lines.push(`     KPI: ${kpi}`);
+        lines.push(`     Estrategia: ${est}`);
+      });
+    }
+    lines.push('');
+  });
+
+  lines.push('── PLAN DE ACCIÓN ──', '');
+
+  ['q','g'].forEach(c => {
+    lines.push(`${c === 'q' ? 'QUITO' : 'GUAYAQUIL'}:`);
+    PLAN_CARRILES.forEach(carril => {
+      lines.push(`  [${carril.label.toUpperCase()}]`);
+      const rows = document.getElementById(`plan-${c}-${carril.id}-rows`);
+      if (rows) {
+        rows.querySelectorAll('.plan-row').forEach(row => {
+          const inputs = row.querySelectorAll('input, select');
+          const accion = inputs[0]?.value;
+          if (!accion) return;
+          const q = inputs[1]?.value || '—';
+          const resp = inputs[2]?.value || '—';
+          const fecha = inputs[3]?.value || '—';
+          const kpi = inputs[4]?.value || '—';
+          lines.push(`    • [${q}] ${accion}`);
+          lines.push(`      Responsable: ${resp} | Fecha: ${fecha}`);
+          lines.push(`      KPI: ${kpi}`);
+        });
+      }
+    });
+    lines.push('');
+  });
+
+  lines.push('── COMPROMISOS ──', '');
+  ['q','g'].forEach(c => {
+    lines.push(`${c === 'q' ? 'QUITO' : 'GUAYAQUIL'}:`);
+    COMPROMISOS_QS.forEach(q => {
+      const val = document.getElementById(`comp-${c}-${q.n}`)?.value || '—';
+      lines.push(`  ${q.n}. ${q.q}`);
+      lines.push(`     → ${val}`);
+    });
+    lines.push('');
+  });
+
+  lines.push('─'.repeat(50));
+  lines.push(`Exportado: ${new Date().toLocaleString('es-EC')}`);
+  return lines.join('\n');
+}
+
+function copyText() {
+  navigator.clipboard.writeText(buildExportText())
+    .then(() => showToast('✓ Texto copiado al portapapeles'))
+    .catch(() => showToast('No se pudo copiar — usa Descargar'));
+}
+
+function downloadTxt() {
+  const txt = buildExportText();
+  const blob = new Blob([txt], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Taller_Metrored_Q3Q4_${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✓ Archivo descargado');
+}
+
+// ═══════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ═══════════════════════════════════════════
+// AUTOSAVE ON INPUT
+// ═══════════════════════════════════════════
+
+document.addEventListener('input', () => {
+  clearTimeout(window._saveTimer);
+  window._saveTimer = setTimeout(saveToStorage, 600);
+});
+document.addEventListener('change', saveToStorage);
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+  buildSemaforo('q');
+  buildSemaforo('g');
+  buildMapaTable('q');
+  buildMapaTable('g');
+  buildPlan('q');
+  buildPlan('g');
+  buildCompromisos('q');
+  buildCompromisos('g');
+  buildChecklist();
+  loadFromStorage();
+  updateProgress();
+
+  // Scroll spy for nav
+  const sections = ['diagnostico','cuentas','plan','compromisos','cierre'];
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        document.querySelectorAll('.nav-pill').forEach(p => {
+          p.classList.toggle('active', p.getAttribute('href') === `#${id}`);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+});
+</script>
+</body>
+</html>
