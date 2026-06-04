@@ -729,15 +729,24 @@ label.chip-r.selected { background: rgba(192,57,43,0.1); border-color: #C0392B; 
 
     <div class="checklist" id="checklist"></div>
 
-    <div style="margin-top:24px">
-      <div class="export-card">
+    <div style="margin-top:24px; display:flex; flex-direction:column; gap:12px">
+      <div class="export-card" style="border-left: 3px solid var(--teal)">
         <div>
-          <div class="export-text">Exportar resultados del taller</div>
-          <div class="export-sub">Guarda una copia en texto para compartir por WhatsApp o email</div>
+          <div class="export-text">📄 Reporte completo de planificación</div>
+          <div class="export-sub">Genera un documento HTML con toda la planificación — listo para imprimir o guardar como PDF desde el navegador</div>
         </div>
         <div class="export-btns">
-          <button class="btn-outline" onclick="copyText()">Copiar texto</button>
-          <button class="btn-solid" onclick="downloadTxt()">Descargar .txt</button>
+          <button class="btn-solid" onclick="exportHTML()" style="background:var(--teal)">Generar reporte</button>
+        </div>
+      </div>
+      <div class="export-card">
+        <div>
+          <div class="export-text">Exportar como texto plano</div>
+          <div class="export-sub">Resumen para compartir por WhatsApp o email</div>
+        </div>
+        <div class="export-btns">
+          <button class="btn-outline" onclick="copyText()">Copiar</button>
+          <button class="btn-outline" onclick="downloadTxt()">Descargar .txt</button>
         </div>
       </div>
     </div>
@@ -1297,6 +1306,334 @@ function buildExportText() {
   lines.push(`Exportado: ${new Date().toLocaleString('es-EC')}`);
   return lines.join('\n');
 }
+
+// ═══════════════════════════════════════════
+// EXPORT HTML REPORT
+// ═══════════════════════════════════════════
+
+function exportHTML() {
+  const date = new Date().toLocaleDateString('es-EC', { year:'numeric', month:'long', day:'numeric' });
+  const qCoord = document.getElementById('q-coord')?.value || '—';
+  const gCoord = document.getElementById('g-coord')?.value || '—';
+
+  // ── Semáforo data ──────────────────────────
+  function getSemData(city) {
+    return SEMAFORO_ROWS.map((row, i) => {
+      let val = '—', cls = '', emoji = '—';
+      ['v','a','r'].forEach(v => {
+        const chip = document.getElementById(`chip-${city}-${i}-${v}`);
+        if (chip?.classList.contains('selected')) {
+          val = v === 'v' ? row.v : v === 'a' ? row.a : row.r;
+          cls = v === 'v' ? 'verde' : v === 'a' ? 'amarillo' : 'rojo';
+          emoji = v === 'v' ? '🟢' : v === 'a' ? '🟡' : '🔴';
+        }
+      });
+      return { dim: row.dim, val, cls, emoji };
+    });
+  }
+
+  // ── Mapa data ──────────────────────────────
+  function getMapaData(city) {
+    const tbody = document.getElementById(`mapa-tbody-${city}`);
+    if (!tbody) return [];
+    return Array.from(tbody.querySelectorAll('tr')).map(tr => {
+      const inputs = tr.querySelectorAll('input, select');
+      return {
+        nombre: inputs[0]?.value || '',
+        tipo:   inputs[1]?.value || '',
+        pot:    inputs[2]?.value || '',
+        rel:    inputs[3]?.value || '',
+        cuad:   inputs[4]?.value || '',
+        kpi:    inputs[5]?.value || '',
+        est:    inputs[6]?.value || ''
+      };
+    }).filter(r => r.nombre);
+  }
+
+  // ── Plan data ──────────────────────────────
+  function getPlanData(city) {
+    return PLAN_CARRILES.map(carril => {
+      const rows = document.getElementById(`plan-${city}-${carril.id}-rows`);
+      if (!rows) return { ...carril, acciones: [] };
+      const acciones = Array.from(rows.querySelectorAll('.plan-row')).map(row => {
+        const inputs = row.querySelectorAll('input, select');
+        return {
+          accion: inputs[0]?.value || '',
+          q:      inputs[1]?.value || '',
+          resp:   inputs[2]?.value || '',
+          fecha:  inputs[3]?.value || '',
+          kpi:    inputs[4]?.value || ''
+        };
+      }).filter(r => r.accion);
+      return { ...carril, acciones };
+    });
+  }
+
+  // ── Compromisos data ───────────────────────
+  function getCompData(city) {
+    return COMPROMISOS_QS.map(q => ({
+      q: q.q,
+      val: document.getElementById(`comp-${city}-${q.n}`)?.value || ''
+    }));
+  }
+
+  // ── Cuadrante badge color ──────────────────
+  function cuadColor(cuad) {
+    const map = { Escalar:'#0D5756', Conquistar:'#E8622A', Mantener:'#1DAFAE', Monitorear:'#6E6E73' };
+    return map[cuad] || '#6E6E73';
+  }
+
+  // ── Semáforo HTML ──────────────────────────
+  function semHTML(city, label, color) {
+    const data = getSemData(city);
+    const rows = data.map(d => `
+      <tr>
+        <td style="padding:9px 14px; font-size:13px; color:#1D1D1F; font-weight:500; border-bottom:1px solid #E8E8ED">${d.dim}</td>
+        <td style="padding:9px 14px; border-bottom:1px solid #E8E8ED; white-space:nowrap">
+          ${d.cls ? `<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;
+            background:${d.cls==='verde'?'rgba(13,87,86,.1)':d.cls==='amarillo'?'rgba(184,122,0,.1)':'rgba(192,57,43,.1)'};
+            color:${d.cls==='verde'?'#0D5756':d.cls==='amarillo'?'#B87A00':'#C0392B'}">
+            ${d.emoji} ${d.val}
+          </span>` : '<span style="color:#aaa;font-size:12px">Sin selección</span>'}
+        </td>
+      </tr>`).join('');
+    return `
+      <div style="margin-bottom:24px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${color};margin-bottom:10px">
+          ${label} · Semáforo de posición
+        </div>
+        <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)">
+          <thead>
+            <tr style="background:#1D1D1F">
+              <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#fff;letter-spacing:.06em;text-transform:uppercase;width:55%">Dimensión</th>
+              <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#fff;letter-spacing:.06em;text-transform:uppercase">Estado actual</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  }
+
+  // ── Mapa HTML ──────────────────────────────
+  function mapaHTML(city, label, color) {
+    const data = getMapaData(city);
+    if (!data.length) return `<div style="color:#aaa;font-size:13px;padding:16px 0">Sin cuentas registradas</div>`;
+    const rows = data.map((r, i) => `
+      <tr style="background:${i%2===0?'#fff':'#F5F5F7'}">
+        <td style="padding:8px 12px;font-size:13px;font-weight:600;color:#1D1D1F;border-bottom:1px solid #E8E8ED">${r.nombre}</td>
+        <td style="padding:8px 12px;font-size:12px;color:#6E6E73;border-bottom:1px solid #E8E8ED">${r.tipo}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #E8E8ED">
+          ${r.cuad ? `<span style="padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;background:${cuadColor(r.cuad)}22;color:${cuadColor(r.cuad)}">${r.cuad}</span>` : '—'}
+        </td>
+        <td style="padding:8px 12px;font-size:12px;color:#6E6E73;border-bottom:1px solid #E8E8ED">Pot: ${r.pot} · Rel: ${r.rel}</td>
+        <td style="padding:8px 12px;font-size:12px;color:#1D1D1F;border-bottom:1px solid #E8E8ED">${r.kpi || '—'}</td>
+        <td style="padding:8px 12px;font-size:12px;color:#1D1D1F;border-bottom:1px solid #E8E8ED">${r.est || '—'}</td>
+      </tr>`).join('');
+    return `
+      <div style="margin-bottom:24px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${color};margin-bottom:10px">
+          ${label} · Mapa de cuentas (${data.length} cuentas)
+        </div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);min-width:700px">
+            <thead>
+              <tr style="background:#1D1D1F">
+                <th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:#fff;letter-spacing:.05em;text-transform:uppercase">Cuenta</th>
+                <th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:#fff;letter-spacing:.05em;text-transform:uppercase">Tipo</th>
+                <th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:#fff;letter-spacing:.05em;text-transform:uppercase">Cuadrante</th>
+                <th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:#fff;letter-spacing:.05em;text-transform:uppercase">Potencial / Relación</th>
+                <th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:#fff;letter-spacing:.05em;text-transform:uppercase">KPI</th>
+                <th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:#fff;letter-spacing:.05em;text-transform:uppercase">Estrategia Q3–Q4</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }
+
+  // ── Plan HTML ──────────────────────────────
+  function planHTML(city, label, color) {
+    const data = getPlanData(city);
+    const sections = data.map(carril => {
+      if (!carril.acciones.length) return '';
+      const rows = carril.acciones.map(a => `
+        <tr>
+          <td style="padding:9px 12px;font-size:13px;color:#1D1D1F;border-bottom:1px solid #E8E8ED">${a.accion}</td>
+          <td style="padding:9px 12px;text-align:center;border-bottom:1px solid #E8E8ED">
+            <span style="padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;background:${carril.color}22;color:${carril.color}">${a.q || '—'}</span>
+          </td>
+          <td style="padding:9px 12px;font-size:12px;color:#6E6E73;border-bottom:1px solid #E8E8ED">${a.resp || '—'}</td>
+          <td style="padding:9px 12px;font-size:12px;color:#6E6E73;border-bottom:1px solid #E8E8ED;white-space:nowrap">${a.fecha || '—'}</td>
+          <td style="padding:9px 12px;font-size:12px;color:#1D1D1F;border-bottom:1px solid #E8E8ED">${a.kpi || '—'}</td>
+        </tr>`).join('');
+      return `
+        <div style="margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:${carril.bg};border-left:4px solid ${carril.color};border-radius:6px 6px 0 0;margin-bottom:0">
+            <span style="font-size:11px;font-weight:800;color:${carril.color};letter-spacing:.08em;text-transform:uppercase">${carril.label}</span>
+            <span style="font-size:11px;color:#6E6E73">${carril.desc}</span>
+          </div>
+          <table style="width:100%;border-collapse:collapse;background:#fff;border:1.5px solid #E8E8ED;border-top:none;border-radius:0 0 6px 6px;overflow:hidden">
+            <thead>
+              <tr style="background:rgba(0,0,0,.03)">
+                <th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:700;color:#6E6E73;letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid #E8E8ED">Acción</th>
+                <th style="padding:7px 12px;text-align:center;font-size:10px;font-weight:700;color:#6E6E73;letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid #E8E8ED;width:50px">Q</th>
+                <th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:700;color:#6E6E73;letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid #E8E8ED">Responsable</th>
+                <th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:700;color:#6E6E73;letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid #E8E8ED">Fecha</th>
+                <th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:700;color:#6E6E73;letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid #E8E8ED">¿Cómo sabremos que funcionó?</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+    }).join('');
+    return `
+      <div style="margin-bottom:24px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${color};margin-bottom:12px">
+          ${label} · Plan de acción Q3–Q4
+        </div>
+        ${sections || '<div style="color:#aaa;font-size:13px">Sin acciones registradas</div>'}
+      </div>`;
+  }
+
+  // ── Compromisos HTML ───────────────────────
+  function compHTML(city, label, color) {
+    const data = getCompData(city);
+    const cards = data.map((d, i) => {
+      const colors = ['#0D5756','#1DAFAE','#E8622A'];
+      const c = colors[i];
+      return `
+        <div style="border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:10px">
+          <div style="background:${c};padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:12px;font-weight:700;color:#fff;letter-spacing:.04em">${d.q}</span>
+            <span style="font-size:20px;font-weight:700;color:rgba(255,255,255,.25)">${i+1}</span>
+          </div>
+          <div style="background:#fff;padding:12px 14px">
+            <p style="font-size:13px;color:${d.val ? '#1D1D1F' : '#aaa'};line-height:1.5;margin:0">${d.val || 'Sin respuesta'}</p>
+          </div>
+        </div>`;
+    }).join('');
+    return `
+      <div style="margin-bottom:24px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${color};margin-bottom:12px">
+          ${label} · Compromisos de cierre
+        </div>
+        ${cards}
+      </div>`;
+  }
+
+  // ── City section ───────────────────────────
+  function citySection(city, label, color, coord) {
+    const extraFields = ['aseg','brok','queja','comp'];
+    const extraLabels = ['Aseguradoras activas','Brókers activos','Queja frecuente','Competencia local'];
+    const extraVals = extraFields.map(f => document.getElementById(`${city}-${f}`)?.value || '—');
+
+    return `
+      <div style="margin-bottom:48px">
+        <!-- City header -->
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;padding-bottom:14px;border-bottom:2px solid ${color}">
+          <div style="width:10px;height:10px;border-radius:50%;background:${color}"></div>
+          <div>
+            <div style="font-size:22px;font-weight:700;color:#1D1D1F;letter-spacing:-.01em">${label}</div>
+            <div style="font-size:13px;color:#6E6E73;margin-top:2px">Coordinador/a: <strong style="color:#1D1D1F">${coord}</strong></div>
+          </div>
+        </div>
+
+        <!-- Context pills -->
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px">
+          ${extraFields.map((f,i) => extraVals[i] !== '—' ? `
+            <div style="padding:6px 12px;background:#F5F5F7;border-radius:20px;font-size:12px;color:#1D1D1F">
+              <span style="color:#6E6E73;margin-right:4px">${extraLabels[i]}:</span>${extraVals[i]}
+            </div>` : '').join('')}
+        </div>
+
+        ${semHTML(city, label, color)}
+        ${mapaHTML(city, label, color)}
+        ${planHTML(city, label, color)}
+        ${compHTML(city, label, color)}
+      </div>`;
+  }
+
+  // ── Build full HTML ────────────────────────
+  const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planificación Comercial Q3–Q4 2026 · Metrored</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #F5F5F7; color: #1D1D1F; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  @media print {
+    body { background: #fff; }
+    .no-print { display: none !important; }
+    .page-break { page-break-before: always; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PRINT BUTTON -->
+<div class="no-print" style="position:fixed;top:16px;right:16px;z-index:100;display:flex;gap:8px">
+  <button onclick="window.print()" style="padding:8px 18px;border-radius:20px;background:#1D1D1F;color:#fff;border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">
+    🖨 Imprimir / Guardar PDF
+  </button>
+  <button onclick="window.close()" style="padding:8px 18px;border-radius:20px;background:#F5F5F7;color:#1D1D1F;border:1.5px solid #E8E8ED;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">
+    Cerrar
+  </button>
+</div>
+
+<div style="max-width:960px;margin:0 auto;padding:48px 24px 80px">
+
+  <!-- HEADER -->
+  <div style="background:#1D1D1F;border-radius:12px;padding:36px 40px 32px;margin-bottom:40px;position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 80% 50%,rgba(29,175,174,.15) 0%,transparent 70%);pointer-events:none"></div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#1DAFAE;margin-bottom:10px">Metrored · Planificación Comercial B2B</div>
+    <div style="font-size:36px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.1;margin-bottom:8px">Resultados del Taller Q3–Q4 2026</div>
+    <div style="font-size:14px;color:#6E6E73">Generado el ${date}</div>
+    <div style="display:flex;gap:14px;margin-top:20px">
+      <span style="font-size:12px;color:rgba(255,255,255,.55);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);padding:5px 12px;border-radius:20px">🏔 Quito: ${qCoord}</span>
+      <span style="font-size:12px;color:rgba(255,255,255,.55);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);padding:5px 12px;border-radius:20px">🌊 Guayaquil: ${gCoord}</span>
+    </div>
+  </div>
+
+  <!-- QUITO -->
+  ${citySection('q', 'Quito', '#1DAFAE', qCoord)}
+
+  <!-- DIVIDER -->
+  <div class="page-break" style="border-top:2px dashed #E8E8ED;margin-bottom:48px"></div>
+
+  <!-- GUAYAQUIL -->
+  ${citySection('g', 'Guayaquil', '#E8622A', gCoord)}
+
+  <!-- FOOTER -->
+  <div style="border-top:1px solid #E8E8ED;padding-top:20px;margin-top:40px;display:flex;justify-content:space-between;align-items:center">
+    <div style="font-size:12px;color:#6E6E73">Metrored Centros Médicos · Taller de Planificación Comercial Q3–Q4 2026</div>
+    <div style="font-size:12px;color:#6E6E73">Basado en Estudio Ipsos · Marzo 2026</div>
+  </div>
+
+</div>
+</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const win = window.open(url, '_blank');
+  if (!win) {
+    // Fallback: download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Planificacion_Metrored_Q3Q4_${new Date().toISOString().slice(0,10)}.html`;
+    a.click();
+    showToast('✓ Reporte descargado');
+  } else {
+    showToast('✓ Reporte generado — usa Ctrl+P para guardar como PDF');
+  }
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
 
 function copyText() {
   navigator.clipboard.writeText(buildExportText())
